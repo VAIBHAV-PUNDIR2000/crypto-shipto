@@ -20,6 +20,7 @@ import {
   useGetCryptoDetailsQuery,
   useGetCryptoHistoryQuery,
 } from "../services/cryptoAPI";
+import Loader from "./Loader";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -33,7 +34,8 @@ const CryptoDetails = () => {
     timeperiod,
   });
   const cryptoDetails = data?.data?.coin;
-  console.log(coinHistory);
+  console.log(cryptoDetails);
+  console.log(coinHistory?.data);
 
   const time = ["3h", "24h", "7d", "30d", "1y", "3m", "3y", "5y"];
 
@@ -102,7 +104,7 @@ const CryptoDetails = () => {
       icon: <ExclamationCircleOutlined />,
     },
   ];
-  if (isFetching) return "LoadinG";
+  if (isFetching) return <Loader />;
   return (
     <Col className="coin-detail-container">
       <Col className="coin-heading-container">
@@ -114,16 +116,36 @@ const CryptoDetails = () => {
           statistics, market cap and supply.
         </p>
       </Col>
-      <Select
-        defaultValue="7d"
-        className="select-timeperiod"
-        placeholder="Select Timeperiod"
-        onChange={(value) => setTimeperiod(value)}
+      <div
+        style={{
+          margin: "2vh",
+          display: "flex",
+          justifyContent: "space-around",
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
       >
-        {time.map((date) => (
-          <Option key={date}>{date}</Option>
-        ))}
-      </Select>
+        <Select
+          defaultValue="7d"
+          className="select-timeperiod"
+          placeholder="Select Timeperiod"
+          onChange={(value) => setTimeperiod(value)}
+        >
+          {time.map((date) => (
+            <Option key={date}>{date}</Option>
+          ))}
+        </Select>
+
+        <img
+          src={cryptoDetails.iconUrl}
+          style={{
+            maxHeight: "15vh",
+            margin: "2vh",
+
+            padding: "2vh",
+          }}
+        />
+      </div>
       <LineChart
         coinHistory={coinHistory}
         currentPrice={millify(cryptoDetails?.price)}
@@ -140,8 +162,8 @@ const CryptoDetails = () => {
               as the base and quote currency, the rank, and trading volume.
             </p>
           </Col>
-          {stats.map(({ icon, title, value }) => (
-            <Col className="coin-stats">
+          {stats.map(({ icon, title, value }, i) => (
+            <Col className="coin-stats" key={i}>
               <Col className="coin-stats-name">
                 <Text>{icon}</Text>
                 <Text>{title}</Text>
@@ -160,8 +182,8 @@ const CryptoDetails = () => {
               as the base and quote currency, the rank, and trading volume.
             </p>
           </Col>
-          {genericStats.map(({ icon, title, value }) => (
-            <Col className="coin-stats">
+          {genericStats.map(({ icon, title, value }, i) => (
+            <Col className="coin-stats" key={i}>
               <Col className="coin-stats-name">
                 <Text>{icon}</Text>
                 <Text>{title}</Text>
@@ -182,7 +204,7 @@ const CryptoDetails = () => {
           <Title level={3} className="coin-details-heading">
             {cryptoDetails.name} Links
           </Title>
-          {cryptoDetails.links?.map((link) => (
+          {cryptoDetails.links?.map((link, i) => (
             <Row className="coin-link" key={link.name}>
               <Title level={5} className="link-name">
                 {link.type}

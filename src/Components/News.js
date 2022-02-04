@@ -3,6 +3,7 @@ import moment from "moment";
 import { Select, Typography, Row, Col, Avatar, Card } from "antd";
 import { useGetCryptoNewsQuery } from "../services/cryptoNewsAPI";
 import { useGetCryptosQuery } from "../services/cryptoAPI";
+import Loader from "./Loader";
 
 const News = ({ simplified }) => {
   const { data } = useGetCryptosQuery(100);
@@ -15,7 +16,7 @@ const News = ({ simplified }) => {
   });
 
   const demo = `http://coinrevolution.com/wp-content/uploads/2020/06/cryptonews.jpg`;
-  if (!cryptoNews?.value) return "laoding";
+  if (!cryptoNews?.value) return <Loader />;
   return (
     <div>
       <Row gutter={[24, 24]}>
